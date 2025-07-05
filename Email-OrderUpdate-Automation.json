@@ -1,0 +1,138 @@
+{
+  "name": "Email-OrderUpdate-Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1IxotFczDz170-jT9_JVxSnd1uRtx6K9B5h8OFTEzZxo",
+          "mode": "list",
+          "cachedResultName": "Customer Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IxotFczDz170-jT9_JVxSnd1uRtx6K9B5h8OFTEzZxo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1IxotFczDz170-jT9_JVxSnd1uRtx6K9B5h8OFTEzZxo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -100
+      ],
+      "id": "d2414cc9-2e9b-4fee-ae55-a32ecaa0811a",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "ENW3SnwHWZMagcvP",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=\"Customer Order Status\"\n\nClient Order Info:\nOrder Id:{{ $json['Order ID'] }}\nName:{{ $json['Customer Name'] }}\nProduct:{{ $json.Product }}\nQuantity:{{ $json.Quantity }}\nPrice:{{ $json['Price (₹)'] }}\nStatus:{{ $json.Status }}\n\nPlease Output the following parameters:\nemailSubject\nemailBody\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -340,
+        -100
+      ],
+      "id": "14b3fbad-c3a6-4648-a226-7a587d8a1a34",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "3yZHL7xUy4vrWALv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "mohammedsalmanj@outlook.com",
+        "subject": "={{ $json.message.content.emailSubject }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content.emailBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        20,
+        -100
+      ],
+      "id": "728a6981-aee3-409d-9ab1-0d376423940d",
+      "name": "Send a message",
+      "webhookId": "434ea559-65cf-44af-a973-54b15493eb94",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "8nQNPDccizLbjIW0",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a2c659a4-c633-4cdc-8315-75e139512bbe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "972afe802898ff274cd97d6d3cf9be37e7cfa61251d18a1b21e366d10e8ae93b"
+  },
+  "id": "VBDcYNhbmBIKpBwO",
+  "tags": []
+}
